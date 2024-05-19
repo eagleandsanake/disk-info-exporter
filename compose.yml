@@ -1,16 +1,15 @@
 version: "3.5"
 services:
   disk-exporter:
-    image: exporter
+    image: disk-exporter
     build:
       context: .
       dockerfile: ./Dockerfile
     container_name: disk-info
-    ports:
-      - "9000:9000"
+#    ports:
+#      - "9000:9000"
     volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
+      - /:/host:ro
     networks:
       - wx
 networks:
