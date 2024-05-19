@@ -28,7 +28,7 @@ def get_disk_usage(partition) -> map:
 
 
 def get_io_disk_usage(partition) -> map:
-    io_usage = psutil.disk_io_counters(partition.mountpoint).get("disk0")
+    io_usage = list(psutil.disk_io_counters(partition.mountpoint).values())[0]
     return {
         "device": partition.device,
         "mount_point": partition.mountpoint,
@@ -65,3 +65,8 @@ def do_collect():
 if __name__ == "__main__":
     # pprint.pprint(list(map(lambda ele: get_disk_usage(ele), get_all_disk_partitions())))
     pprint.pprint(list(map(lambda ele: get_io_disk_usage(ele), get_all_disk_partitions())))
+    # pprint.pprint(list(map(lambda ele: psutil.disk_usage(ele.mountpoint), get_all_disk_partitions())))
+    # items = list(map(lambda ele: psutil.disk_io_counters(ele), get_all_disk_partitions()))
+    # print()
+    # list_items = [item for sublist in items for item in sublist]
+    # pprint.pprint(list_items)
