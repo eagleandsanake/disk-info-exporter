@@ -31,13 +31,17 @@ def do_collect():
     # 磁盘使用信息
     disk_all = get_all_disk_partitions()
     for disk in disk_all:
-        used_info = dict(get_disk_usage(disk))
-        for index in used_info_index:
-            disk_usage_gauge.labels(
-                device=disk.device,
-                mount_point=disk.mountpoint,
-                type=index
-            ).set(used_info.get(index))
+        try:
+            used_info = dict(get_disk_usage(disk))
+            for index in used_info_index:
+                disk_usage_gauge.labels(
+                    device=disk.device,
+                    mount_point=disk.mountpoint,
+                    type=index
+                ).set(used_info.get(index))
+        except PermissionError:
+            print(f"当前设备无权限获取{disk.device}")
+            continue
     # 获取写入写出量
     io_used_info = psutil.disk_io_counters(perdisk=True)
     for disk_mame, used_info in io_used_info.items():
@@ -49,7 +53,7 @@ def do_collect():
 
 
 if __name__ == "__main__":
-    # print(list(map(lambda ele: get_disk_usage(ele), get_all_disk_partitions())))
-    print(psutil.disk_io_counters(perdisk=True))
+    print(list(map(lambda ele: get_disk_usage(ele), get_all_disk_partitions())))
+    # print(psutil.disk_io_counters(perdisk=True))
     # do_collect()
     # print(disk_usage_gauge)
